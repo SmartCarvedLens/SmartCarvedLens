@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smart Carved Lens — Óptica de Precisión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --gold: #2dd4bf;
+  --gold-light: #5eead4;
+  --gold-dark: #0d9488;
+  --cream: #ecfffb;
+  --ink: #043b34;
+  --ink-soft: #0a5148;
+  --ink-muted: #7fe4d4;
+  --charcoal: #062f29;
+  --surface: #ffffff;
+  --border: rgba(45, 212, 191, 0.25);
+  --border-strong: rgba(45, 212, 191, 0.5);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Jost', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--cream);
+  overflow-x: hidden;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+section { position: relative; }
+
+/* ───── FOCUS / ACCESSIBILITY ───── */
+a:focus-visible, button:focus-visible {
+  outline: 1px solid var(--gold-light);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* ───── NAVBAR ───── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 4rem;
+  background: linear-gradient(to bottom, rgba(26,22,16,0.95) 0%, transparent 100%);
+  backdrop-filter: blur(2px);
+  transition: padding 0.3s ease, background 0.3s ease;
+}
+
+nav.scrolled {
+  padding: 1rem 4rem;
+  background: rgba(26,22,16,0.97);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--gold-light);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.logo span {
+  display: block;
+  font-size: 0.6rem;
+  font-family: var(--font-body);
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(249,245,239,0.7);
+  text-decoration: none;
+  transition: color 0.25s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover { color: var(--gold-light); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  border: 1px solid var(--gold-dark);
+  padding: 0.55rem 1.3rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-strong);
+  color: var(--gold-light);
+  width: 40px; height: 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+/* ───── HERO ───── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero-photo {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 46%;
+  z-index: 1;
+}
+
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.05);
+  mask-image: linear-gradient(to right, transparent 0%, black 18%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%);
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 75% 50%, rgba(184,150,90,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 20% 80%, rgba(184,150,90,0.04) 0%, transparent 60%);
+}
+
+.hero-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.hero-lines svg { width: 100%; height: 100%; }
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 4rem;
+  max-width: 700px;
+  animation: fadeUp 1s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--gold);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 300;
+  line-height: 1.03;
+  color: var(--cream);
+  margin-bottom: 0.2rem;
+  letter-spacing: -0.01em;
+}
+
+.hero h1 em { font-style: italic; color: var(--gold-light); }
+
+.hero-subtitle {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(249,245,239,0.55);
+  margin: 1.8rem 0 2.8rem;
+  max-width: 460px;
+  font-weight: 300;
+}
+
+.hero-actions { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+
+.btn-primary {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--gold);
+  color: var(--ink);
+  text-decoration: none;
+  padding: 1rem 2.4rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-block;
+  border: 1px solid var(--gold);
+}
+
+.btn-primary:hover { background: var(--gold-light); border-color: var(--gold-light); transform: translateY(-2px); }
+
+.btn-ghost {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream);
+  text-decoration: none;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-strong);
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover { color: var(--gold-light); border-color: var(--gold-light); }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 2.5rem; left: 4rem;
+  display: flex; align-items: center; gap: 0.8rem;
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.hero-scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--gold), transparent); }
+
+/* ───── SECTION SHELL ───── */
+.section {
+  padding: 8rem 4rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.section-alt { background: var(--charcoal); }
+
+.eyebrow {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+
+.eyebrow::before { content: ''; display: inline-block; width: 2rem; height: 1px; background: var(--gold); }
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 400;
+  color: var(--cream);
+  line-height: 1.1;
+  max-width: 640px;
+}
+
+.section-title em { font-style: italic; color: var(--gold-light); }
+
+.section-lead {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: rgba(249,245,239,0.55);
+  max-width: 480px;
+  margin-top: 1.5rem;
+}
+
+/* ───── NOSOTROS ───── */
+#nosotros .grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-top: 4rem;
+  align-items: start;
+}
+
+.nosotros-photo {
+  margin-top: 4rem;
+  width: 100%;
+  aspect-ratio: 16/7;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.nosotros-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
+  display: block;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  color: var(--gold-light);
+  font-weight: 400;
+}
+
+.stat-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-top: 0.4rem;
+}
+
+/* ───── MISIÓN Y VISIÓN ───── */
+.mv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5px;
+  margin-top: 4rem;
+  background: var(--border);
+}
+
+.mv-card {
+  background: var(--ink);
+  padding: 3rem 2.6rem;
+  transition: background 0.35s ease;
+}
+
+.mv-card:hover { background: var(--charcoal); }
+
+.mv-text {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: rgba(236,255,251,0.65);
+  margin-top: 1.2rem;
+}
+
+/* ───── COLECCIONES ───── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px;
+  margin-top: 4rem;
+  background: var(--border);
+}
+
+.card {
+  background: var(--ink);
+  padding: 3rem 2.4rem;
+  transition: background 0.35s ease;
+}
+
+.card:hover { background: var(--charcoal); }
+
+.card-photo {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  margin-bottom: 1.6rem;
+}
+
+.card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.card:hover .card-photo img { transform: scale(1.06); }
+
+.card-tag {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.card h3 {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin: 1.2rem 0 1rem;
+}
+
+.card p {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: rgba(249,245,239,0.5);
+}
+
+/* ───── PROCESO ───── */
+.process-list { margin-top: 4rem; }
+
+.process-item {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 2.5rem;
+  padding: 2.2rem 0;
+  border-top: 1px solid var(--border);
+  align-items: baseline;
+}
+
+.process-item:last-child { border-bottom: 1px solid var(--border); }
+
+.process-mark {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--gold);
+  font-style: italic;
+}
+
+.process-item h4 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 0.5rem;
+}
+
+.process-item p {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: rgba(249,245,239,0.5);
+  max-width: 560px;
+}
+
+/* ───── TESTIMONIOS ───── */
+.testi-wrap {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.testi-card {
+  border: 1px solid var(--border);
+  padding: 2.4rem;
+}
+
+.testi-quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--cream);
+}
+
+.testi-name {
+  margin-top: 1.6rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.testi-role {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  margin-top: 0.2rem;
+}
+
+.testi-photo {
+  margin-top: 3rem;
+  width: 100%;
+  aspect-ratio: 21/6;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.testi-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  display: block;
+}
+
+/* ───── CATALOGO STRIP ───── */
+.catalog-strip {
+  background: linear-gradient(120deg, var(--charcoal), var(--ink));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 3.5rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.catalog-strip h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.7rem;
+  color: var(--cream);
+}
+
+.catalog-strip p {
+  font-size: 0.85rem;
+  color: rgba(249,245,239,0.5);
+  margin-top: 0.4rem;
+  max-width: 420px;
+}
+
+/* ───── CONTACTO ───── */
+#contacto .grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-top: 3.5rem;
+}
+
+.contact-list { list-style: none; margin-top: 2rem; }
+
+.contact-list li {
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.contact-list li:last-child { border-bottom: 1px solid var(--border); }
+
+.contact-list span:first-child { color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.65rem; }
+.contact-list span:last-child { color: var(--cream); }
+
+.field {
+  margin-bottom: 1.4rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.6rem;
+}
+
+.field input, .field textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-strong);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 0.6rem 0;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.field input:focus, .field textarea:focus { border-color: var(--gold-light); }
+.field textarea { resize: vertical; min-height: 90px; }
+
+/* ───── FOOTER ───── */
+footer {
+  padding: 3.5rem 4rem 2.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+footer .logo { font-size: 1.2rem; }
+
+.footer-links { display: flex; gap: 2rem; list-style: none; }
+.footer-links a { color: rgba(249,245,239,0.5); text-decoration: none; font-size: 0.75rem; transition: color 0.25s ease; }
+.footer-links a:hover { color: var(--gold-light); }
+
+.footer-note { font-size: 0.7rem; color: var(--ink-muted); width: 100%; text-align: center; margin-top: 1rem; }
+
+/* ───── RESPONSIVE ───── */
+@media (max-width: 980px) {
+  nav, .section, .catalog-strip, footer { padding-left: 2rem; padding-right: 2rem; }
+  .nav-links { display: none; }
+  .nav-toggle { display: block; }
+  .card-grid, .testi-wrap, #nosotros .grid-2, #contacto .grid-2 { grid-template-columns: 1fr; }
+  .stat-row { grid-template-columns: 1fr 1fr; }
+  .hero-photo { width: 100%; opacity: 0.35; }
+  .hero-photo img { mask-image: linear-gradient(to bottom, transparent 0%, black 30%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%); }
+}
+
+@media (max-width: 560px) {
+  .hero-content { padding: 0 1.5rem; }
+  .hero-scroll { left: 1.5rem; }
+  .stat-row { grid-template-columns: 1fr; }
+  .process-item { grid-template-columns: 1fr; gap: 0.6rem; }
+  .testi-photo { aspect-ratio: 16/9; }
+}
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="#" class="logo">Smart Carved Lens<span>Óptica de Precisión</span></a>
+  <ul class="nav-links">
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#mision-vision">Misión y visión</a></li>
+    <li><a href="#colecciones">Colecciones</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+    <li><a href="#testimonios">Testimonios</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a class="nav-cta" href="https://canva.link/qrfd81jqhebpfwi" target="_blank" rel="noopener">Ver catálogo</a>
+</nav>
+
+<!-- ───── HERO ───── -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-lines">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="900" cy="400" r="260" fill="none" stroke="#5eead4" stroke-width="1"/>
+      <circle cx="900" cy="400" r="180" fill="none" stroke="#5eead4" stroke-width="1"/>
+      <circle cx="900" cy="400" r="100" fill="none" stroke="#5eead4" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="hero-photo"><img src="images/gafas-01-hero.jpg" alt="Gafas de sol talladas a mano Smart Carved Lens" /></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Talla óptica artesanal desde 1994</div>
+    <h1>Visión tallada<br>con <em>precisión</em></h1>
+    <p class="hero-subtitle">Lentes de autor diseñados para cada rostro y cada graduación, esculpidos a mano en nuestro taller de precisión antes de llegar a tus manos.</p>
+    <div class="hero-actions">
+      <a href="#contacto" class="btn-primary">Agendar valoración</a>
+      <a href="#colecciones" class="btn-ghost">Ver colecciones</a>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="hero-scroll-line"></div>Desliza</div>
+</section>
+
+<!-- ───── NOSOTROS ───── -->
+<section class="section" id="nosotros">
+  <div class="eyebrow">La empresa</div>
+  <h2 class="section-title">Tres décadas puliendo <em>el detalle</em></h2>
+  <div class="grid-2">
+    <p class="section-lead">Smart Carved Lens nació en un pequeño taller óptico con una idea simple: ningún par de ojos es igual a otro, así que ningún lente debería serlo. Hoy combinamos tallado artesanal con tecnología de medición digital para lograr una precisión que las cadenas ópticas no pueden ofrecer.</p>
+    <p class="section-lead">Cada montura pasa por manos de maestros ópticos con más de quince años de oficio, y cada fórmula se revisa dos veces antes de tallarse. Es una manera más lenta de trabajar — y por eso funciona.</p>
+  </div>
+  <div class="stat-row">
+    <div><div class="stat-num">30+</div><div class="stat-label">Años de oficio</div></div>
+    <div><div class="stat-num">48K</div><div class="stat-label">Lentes tallados</div></div>
+    <div><div class="stat-num">12</div><div class="stat-label">Maestros ópticos</div></div>
+  </div>
+  <div class="nosotros-photo"><img src="images/gafas-09-gris.jpg" alt="Montura gris translúcida Smart Carved Lens" /></div>
+</section>
+
+<!-- ───── MISIÓN Y VISIÓN ───── -->
+<section class="section section-alt" id="mision-vision">
+  <div class="eyebrow">Nuestro propósito</div>
+  <h2 class="section-title">Misión y <em>visión</em></h2>
+  <div class="mv-grid">
+    <div class="mv-card">
+      <div class="card-tag">Misión</div>
+      <p class="mv-text">Diseñar y tallar lentes de autor con precisión artesanal y tecnología digital, ofreciendo a cada persona una solución óptica única que se ajuste a su rostro, su graduación y su forma de ver el mundo, con un servicio cercano, honesto y de la más alta calidad.</p>
+    </div>
+    <div class="mv-card">
+      <div class="card-tag">Visión</div>
+      <p class="mv-text">Ser reconocidos como el taller óptico de referencia en Latinoamérica por nuestra talla artesanal, innovando constantemente en materiales y procesos, sin perder jamás el detalle humano que distingue a cada lente Smart Carved Lens.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───── COLECCIONES ───── -->
+<section class="section section-alt" id="colecciones">
+  <div class="eyebrow">Lo que hacemos</div>
+  <h2 class="section-title">Colecciones y <em>servicios</em></h2>
+  <p class="section-lead">Desde el examen visual hasta el pulido final, cada servicio está pensado para acompañar tu graduación en cada etapa.</p>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-photo"><img src="images/gafas-02-cateye-negro.jpg" alt="Montura cat-eye negra Smart Carved Lens" /></div>
+      <div class="card-tag">Colección</div>
+      <h3>Monturas de autor</h3>
+      <p>Series limitadas en acetato y titanio, diseñadas y numeradas a mano en nuestro taller.</p>
+    </div>
+    <div class="card">
+      <div class="card-photo"><img src="images/gafas-03-rectangular.jpg" alt="Montura rectangular negra Smart Carved Lens" /></div>
+      <div class="card-tag">Servicio</div>
+      <h3>Examen visual avanzado</h3>
+      <p>Diagnóstico digital de alta precisión para graduaciones exactas, incluso en casos complejos.</p>
+    </div>
+    <div class="card">
+      <div class="card-photo"><img src="images/gafas-06-carey.jpg" alt="Montura carey Smart Carved Lens" /></div>
+      <div class="card-tag">Servicio</div>
+      <h3>Lentes de autor</h3>
+      <p>Tallado óptico personalizado según tu rostro, tu graduación y tu forma de ver el mundo.</p>
+    </div>
+    <div class="card">
+      <div class="card-photo"><img src="images/gafas-04-rosa.jpg" alt="Montura rosa infantil Smart Carved Lens" /></div>
+      <div class="card-tag">Colección</div>
+      <h3>Línea infantil</h3>
+      <p>Monturas ligeras y resistentes pensadas para el ritmo de los más pequeños de la casa.</p>
+    </div>
+    <div class="card">
+      <div class="card-photo"><img src="images/gafas-07-rojo-plata.jpg" alt="Montura roja y plateada Smart Carved Lens" /></div>
+      <div class="card-tag">Servicio</div>
+      <h3>Ajuste y mantenimiento</h3>
+      <p>Revisión, pulido y ajuste de monturas de por vida para cada cliente Smart Carved Lens.</p>
+    </div>
+    <div class="card">
+      <div class="card-photo"><img src="images/gafas-05-sol-crema.jpg" alt="Gafas de sol color crema Smart Carved Lens" /></div>
+      <div class="card-tag">Colección</div>
+      <h3>Edición sol</h3>
+      <p>Lentes solares graduados con protección UV400 y acabados tallados a mano.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───── PROCESO ───── -->
+<section class="section" id="proceso">
+  <div class="eyebrow">Cómo trabajamos</div>
+  <h2 class="section-title">Del diagnóstico <em>al tallado final</em></h2>
+  <div class="process-list">
+    <div class="process-item">
+      <div class="process-mark">I</div>
+      <div><h4>Valoración visual</h4><p>Medimos tu graduación y la forma de tu rostro con equipos de precisión digital.</p></div>
+    </div>
+    <div class="process-item">
+      <div class="process-mark">II</div>
+      <div><h4>Diseño de montura</h4><p>Elegimos juntos material, forma y ajuste según tu estilo y tus necesidades ópticas.</p></div>
+    </div>
+    <div class="process-item">
+      <div class="process-mark">III</div>
+      <div><h4>Tallado artesanal</h4><p>Nuestros maestros ópticos tallan cada lente a mano, verificando la curvatura en cada paso.</p></div>
+    </div>
+    <div class="process-item">
+      <div class="process-mark">IV</div>
+      <div><h4>Ajuste final</h4><p>Entregamos tus lentes ajustados a tu rostro, con seguimiento incluido durante el primer mes.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── TESTIMONIOS ───── -->
+<section class="section section-alt" id="testimonios">
+  <div class="eyebrow">Clientes</div>
+  <h2 class="section-title">Lo que dicen <em>de nosotros</em></h2>
+  <div class="testi-wrap">
+    <div class="testi-card">
+      <p class="testi-quote">"La diferencia de un lente tallado a mano se nota desde el primer día."</p>
+      <div class="testi-name">Marcela Ríos</div>
+      <div class="testi-role">Clienta desde 2019</div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-quote">"Un servicio detallado, cercano y honesto de principio a fin."</p>
+      <div class="testi-name">Andrés Fonseca</div>
+      <div class="testi-role">Clienta desde 2021</div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-quote">"Encontré monturas que finalmente se ajustan a mi rostro."</p>
+      <div class="testi-name">Laura Peña</div>
+      <div class="testi-role">Clienta desde 2023</div>
+    </div>
+  </div>
+  <div class="testi-photo"><img src="images/gafas-08-vino.jpg" alt="Montura color vino Smart Carved Lens" /></div>
+</section>
+
+<!-- ───── CATALOGO ───── -->
+<div class="catalog-strip">
+  <div>
+    <h3>Explora el catálogo completo</h3>
+    <p>Revisa todas nuestras colecciones y servicios en el catálogo digital.</p>
+  </div>
+  <a class="btn-primary" href="https://canva.link/qrfd81jqhebpfwi" target="_blank" rel="noopener">Ver catálogo en Canva</a>
+</div>
+
+<!-- ───── CONTACTO ───── -->
+<section class="section" id="contacto">
+  <div class="eyebrow">Contacto</div>
+  <h2 class="section-title">Agenda tu <em>valoración visual</em></h2>
+  <div class="grid-2">
+    <div>
+      <p class="section-lead">Escríbenos y un maestro óptico te contactará para agendar tu cita en el taller.</p>
+      <ul class="contact-list">
+        <li><span>Correo</span><span>smartcarvedlensoficial@gmail.com</span></li>
+        <li><span>Taller</span><span>Bogotá, Colombia</span></li>
+        <li><span>Horario</span><span>Lun – Sáb, 9am – 6pm</span></li>
+      </ul>
+    </div>
+    <form>
+      <div class="field"><label>Nombre</label><input type="text" placeholder="Tu nombre completo" /></div>
+      <div class="field"><label>Correo</label><input type="email" placeholder="tucorreo@ejemplo.com" /></div>
+      <div class="field"><label>Mensaje</label><textarea placeholder="Cuéntanos qué necesitas"></textarea></div>
+      <a href="https://wa.me/lucho_1258" target="_blank" rel="noopener" class="btn-primary" style="border:1px solid var(--gold); cursor:pointer; text-align:center;">Enviar mensaje</a>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <a href="#" class="logo">Smart Carved Lens</a>
+  <ul class="footer-links">
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#colecciones">Colecciones</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="https://canva.link/qrfd81jqhebpfwi" target="_blank" rel="noopener">Catálogo</a></li>
+  </ul>
+  <p class="footer-note">© 2026 Smart Carved Lens — Óptica de Precisión. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+</script>
+
+</body>
+</html>
